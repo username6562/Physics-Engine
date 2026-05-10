@@ -29,7 +29,7 @@ public class Circle
     const float SLEEP_TIME = 40;
     int sleepCounter = 0;
     const float WAKE_THRESHOLD= 0.8f;
-
+    const float FRICTION = 0.8f;
     float deltaTime = 0.9f;
 
     Vector2 acceleration;
@@ -251,8 +251,11 @@ public class Circle
                 normal = new Vector2(-AB.Y, AB.X);
                 normal = Vector2.Normalize(normal);
             }
-            var incidentVelocity = Vector2.Dot(circle.velocity , normal);
-            var totalVelocity = -(1 + restitution) * incidentVelocity * circle.mass;
+
+
+            var velocityAlongNormal = Vector2.Dot(circle.velocity , normal);
+            
+            var totalVelocity = -(1 + restitution) * velocityAlongNormal * circle.mass;
 
             
 
@@ -266,17 +269,29 @@ public class Circle
 
             
 
-            if (incidentVelocity < 0)
+            if (velocityAlongNormal < 0)
             {
                 float inverseMassCircle = 1.0f / circle.mass;
                 float inverseMassLine = 0.0f; // Static
 
-                float j = -(1 + restitution) * incidentVelocity;
+                float j = -(1 + restitution) * velocityAlongNormal;
                 j /= (inverseMassCircle + inverseMassLine);
 
                 // 2. Apply the Impulse Vector to the velocity
                 Vector2 impulseVector = j * normal;
                 circle.velocity += impulseVector * inverseMassCircle; 
+            }
+
+            if (velocityAlongNormal > 0)
+            {
+                Vector2 tanget = new Vector2(-normal.Y , normal.X);
+                var velocityAlongTangent = Vector2.Dot(tanget , circle.velocity);
+
+                var tangentVelocity = tanget * velocityAlongTangent;
+                var normalVelocity = normal * velocityAlongNormal;
+                tangentVelocity *= (1 - FRICTION);
+                circle.velocity = tangentVelocity +  normalVelocity;
+
             }
         }
     }
