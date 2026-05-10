@@ -1,0 +1,4 @@
+circle vs line segment collision”
+“closest point on line segment to circle”
+“collision normal from line segment”
+“project point onto line segment”

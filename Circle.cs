@@ -29,6 +29,8 @@ public class Circle
     int sleepCounter = 0;
     const float WAKE_THRESHOLD= 0.8f;
 
+    float deltatime = 0.9f;
+
     Vector2 acceleration;
     Vector2 force = new Vector2(100 , 0);
     public Circle(float mass ,Vector2 position, float radius, int segments, Texture2D pixel , Color color)
@@ -39,10 +41,10 @@ public class Circle
         this.pixel = pixel;
         this.color = color;
         this.mass = mass;
-        velocity = new Vector2(4f, 4f);
+        velocity = new Vector2(0.1f, 0.1f);
         
     }
-    public void Draw(SpriteBatch spriteBatch , bool fill)
+    public void Draw(SpriteBatch spriteBatch , bool fill) 
     {
         float step = MathHelper.TwoPi / Segments;
         for (int i = 0; i <Segments ; i++)
@@ -237,7 +239,7 @@ public class Circle
         float distanceSq = delta.LengthSquared(); 
         
         if (distanceSq <= circle.radius * circle.radius)
-        {
+        { 
             var distance = (float)Math.Sqrt(distanceSq) ;
             Vector2 normal;
 
@@ -251,7 +253,7 @@ public class Circle
             var incidentVelocity = Vector2.Dot(circle.velocity , normal);
             var totalVelocity = -(1 + restitution) * incidentVelocity;
 
-            var impulse = totalVelocity / (1 / circle.mass +0);
+            var impulse = totalVelocity / (1 / circle.mass);
             Vector2 impulseVector = impulse * normal;
 
             float overlap = circle.radius - distance;
@@ -264,12 +266,14 @@ public class Circle
 
             
 
-            if (incidentVelocity < 0)
-            {
-                var reflectedVelocity  = circle.velocity -  2* (incidentVelocity * normal) ;
+            // if (incidentVelocity < 0)
+            // {
+            //     var reflectedVelocity  = circle.velocity -  2* (incidentVelocity * normal) ;
 
-                circle.velocity = reflectedVelocity;
-            }
+
+            //     circle.velocity = reflectedVelocity;
+            //     // circle.velocity += impulseVector;
+            // }
         }
     }
     
