@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ public class Circle
     int sleepCounter = 0;
     const float WAKE_THRESHOLD= 0.8f;
 
-    float deltatime = 0.9f;
+    float deltaTime = 0.9f;
 
     Vector2 acceleration;
     Vector2 force = new Vector2(100 , 0);
@@ -41,7 +42,7 @@ public class Circle
         this.pixel = pixel;
         this.color = color;
         this.mass = mass;
-        velocity = new Vector2(0.1f, 0.1f);
+        velocity = new Vector2(2f, 2f);
         
     }
     public void Draw(SpriteBatch spriteBatch , bool fill) 
@@ -96,9 +97,9 @@ public class Circle
     
     public void ApplyGravity()
     {
-        Vector2 gravityForce = gravity * mass;
-        acceleration = gravityForce / mass;
-        velocity += acceleration ;
+        
+        acceleration = gravity / mass;
+        velocity += acceleration * deltaTime ;
         Position += velocity ;
         
     }
@@ -251,10 +252,9 @@ public class Circle
                 normal = Vector2.Normalize(normal);
             }
             var incidentVelocity = Vector2.Dot(circle.velocity , normal);
-            var totalVelocity = -(1 + restitution) * incidentVelocity;
+            var totalVelocity = -(1 + restitution) * incidentVelocity * circle.mass;
 
-            var impulse = totalVelocity / (1 / circle.mass);
-            Vector2 impulseVector = impulse * normal;
+            
 
             float overlap = circle.radius - distance;
             if (overlap > 0)
@@ -266,14 +266,18 @@ public class Circle
 
             
 
-            // if (incidentVelocity < 0)
-            // {
-            //     var reflectedVelocity  = circle.velocity -  2* (incidentVelocity * normal) ;
+            if (incidentVelocity < 0)
+            {
+                float inverseMassCircle = 1.0f / circle.mass;
+                float inverseMassLine = 0.0f; // Static
 
+                float j = -(1 + restitution) * incidentVelocity;
+                j /= (inverseMassCircle + inverseMassLine);
 
-            //     circle.velocity = reflectedVelocity;
-            //     // circle.velocity += impulseVector;
-            // }
+                // 2. Apply the Impulse Vector to the velocity
+                Vector2 impulseVector = j * normal;
+                circle.velocity += impulseVector * inverseMassCircle; 
+            }
         }
     }
     
