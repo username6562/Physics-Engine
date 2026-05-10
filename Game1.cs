@@ -54,7 +54,7 @@ public class Game1 : Game
         pixel = new Texture2D(GraphicsDevice , 1 , 1);
         pixel.SetData(new[] {Color.White});
 
-        circle = new Circle(40f ,new Vector2(200, 200),  32,30,pixel,  Color.Red);
+        circle = new Circle(40f ,new Vector2(100, 50),  32,30,pixel,  Color.Red);
         // MultipleCircles(500000, 30);
 
     }
@@ -104,7 +104,7 @@ public class Game1 : Game
     protected override void Draw(GameTime gameTime)
     {
         
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.White);
         _spriteBatch.Begin();
 
        foreach (var circle in circles)
