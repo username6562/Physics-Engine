@@ -42,7 +42,7 @@ public class Circle
         this.pixel = pixel;
         this.color = color;
         this.mass = mass;
-        velocity = new Vector2(2f, 2f);
+        velocity = new Vector2(0, 2f);
         
     }
     public void Draw(SpriteBatch spriteBatch , bool fill) 
@@ -244,15 +244,13 @@ public class Circle
             var distance = (float)Math.Sqrt(distanceSq) ;
             Vector2 normal;
 
-            if (distance > 0.0001f) {
-            normal = delta / distance;
-            } 
-            else {
-                normal = new Vector2(-AB.Y, AB.X);
-                normal = Vector2.Normalize(normal);
-            }
-
-
+            if (t <= 0)
+                normal = Vector2.Normalize(circle.Position - pointA);
+            else if (t >= 1)
+                normal = Vector2.Normalize(circle.Position - pointB);
+            else
+                normal = delta / distance;
+           
             var velocityAlongNormal = Vector2.Dot(circle.velocity , normal);
             
             var totalVelocity = -(1 + restitution) * velocityAlongNormal * circle.mass;
@@ -268,7 +266,7 @@ public class Circle
             }
 
             
-
+            
             if (velocityAlongNormal < 0)
             {
                 float inverseMassCircle = 1.0f / circle.mass;
@@ -289,7 +287,7 @@ public class Circle
 
                 var tangentVelocity = tanget * velocityAlongTangent;
                 var normalVelocity = normal * velocityAlongNormal;
-                tangentVelocity *= (1 - FRICTION);
+                tangentVelocity *= 1 - FRICTION;
                 circle.velocity = tangentVelocity +  normalVelocity;
 
             }
